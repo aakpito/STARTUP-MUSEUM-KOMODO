@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rencana Startup: Museum Komodo Labuan Bajo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: Desain aplikasi ini menggunakan pendekatan naratif berbasis gulir (scrolling narrative) yang terbagi menjadi beberapa seksi tematik: Visi, Peluang Pasar, Konsep, Finansial, dan Peta Jalan. Struktur ini dipilih untuk memandu pengguna secara logis melalui alur proposal bisnis, dari ide besar hingga rencana aksi konkret. Pengguna dapat menavigasi menggunakan bilah navigasi atas atau dengan menggulir halaman. Interaktivitas difokuskan pada visualisasi data (grafik) yang merespons hover untuk memberikan detail, memungkinkan eksplorasi data tanpa membebani pengguna. Tujuannya adalah menyajikan informasi yang padat menjadi mudah dicerna dan menarik. -->
+    <!-- Visualization & Content Choices: 1. Data Pertumbuhan Turis (Peluang Pasar) -> Goal: Menunjukkan tren kenaikan -> Viz: Grafik Garis (Chart.js) -> Interaction: Tooltip on hover -> Justification: Efektif untuk menampilkan data deret waktu dan tren. 2. Segmentasi Pengunjung (Peluang Pasar) -> Goal: Membandingkan proporsi -> Viz: Grafik Donat (Chart.js) -> Interaction: Tooltip on hover -> Justification: Ideal untuk menunjukkan bagian dari keseluruhan secara visual. 3. Proyeksi Pendapatan (Finansial) -> Goal: Menampilkan pertumbuhan proyeksi -> Viz: Grafik Batang (Chart.js) -> Interaction: Tooltip on hover -> Justification: Mudah untuk membandingkan nilai antar kategori (tahun). 4. Alokasi Dana (Finansial) -> Goal: Menunjukkan distribusi anggaran -> Viz: Grafik Donat (Chart.js) -> Interaction: Tooltip on hover -> Justification: Jelas untuk memvisualisasikan alokasi persentase. 5. Peta Jalan -> Goal: Menunjukkan urutan dan waktu -> Viz: Diagram alur horizontal (HTML/Tailwind) -> Interaction: Highlight on hover (opsional) -> Justification: Menyajikan linimasa proyek secara kronologis dan mudah diikuti. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8; /* Warm off-white */
+            color: #4A4A4A;
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+            color: #645950; /* Muted brown */
+            padding-bottom: 4px;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #D4A373; /* Earthy gold */
+        }
+        .nav-link.active::after, .nav-link:hover::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #D4A373;
+            bottom: 0;
+            left: 0;
+            transform: scaleX(1);
+            transition: transform 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #D4A373;
+            bottom: 0;
+            left: 0;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            border: 1px solid #F0EAE3;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .section-title {
+            color: #3D352E; /* Darker brown */
+        }
+        .hero-bg {
+             background-image: url('https://placehold.co/1920x1080/FDFBF8/D4A373?text=Museum+Komodo');
+             background-size: cover;
+             background-position: center;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigasi -->
+    <header class="bg-[#FDFBF8]/80 backdrop-blur-sm sticky top-0 z-50 border-b border-[#F0EAE3]">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold text-[#3D352E]">Museum Komodo</a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#vision" class="nav-link active">Visi</a>
+                <a href="#market" class="nav-link">Peluang Pasar</a>
+                <a href="#concept" class="nav-link">Konsep</a>
+                <a href="#financial" class="nav-link">Finansial</a>
+                <a href="#roadmap" class="nav-link">Peta Jalan</a>
+                <a href="Startup Museum Komodo Labuan Bajo.pdf" target="_blank" rel="noopener noreferrer" class="nav-link">Materi Artikel</a>
+                <a href="#audio" class="nav-link">Ringkasan Audio</a>
+                <a href="#video-explanation" class="nav-link">Video Penjelasan</a>
+                <a href="#peta-pikiran" class="nav-link">Peta Pikiran</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-btn" class="text-[#645950] focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[#FDFBF8] pb-4">
+            <a href="#vision" class="block text-center py-2 px-4 text-sm nav-link">Visi</a>
+            <a href="#market" class="block text-center py-2 px-4 text-sm nav-link">Peluang Pasar</a>
+            <a href="#concept" class="block text-center py-2 px-4 text-sm nav-link">Konsep</a>
+            <a href="#financial" class="block text-center py-2 px-4 text-sm nav-link">Finansial</a>
+            <a href="#roadmap" class="block text-center py-2 px-4 text-sm nav-link">Peta Jalan</a>
+            <a href="Startup Museum Komodo Labuan Bajo.pdf" target="_blank" rel="noopener noreferrer" class="block text-center py-2 px-4 text-sm nav-link">Materi Artikel</a>
+            <a href="#audio" class="block text-center py-2 px-4 text-sm nav-link">Ringkasan Audio</a>
+            <a href="#video-explanation" class="block text-center py-2 px-4 text-sm nav-link">Video Penjelasan</a>
+            <a href="#peta-pikiran" class="block text-center py-2 px-4 text-sm nav-link">Peta Pikiran</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-bg">
+             <div class="bg-black/30 min-h-[60vh] flex items-center">
+                <div class="container mx-auto px-6 text-center text-white">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-4">Mewujudkan Legenda: Museum Komodo</h1>
+                    <p class="text-lg md:text-xl max-w-3xl mx-auto mb-2">Sebuah proposal untuk mendirikan pusat edukasi dan konservasi komodo kelas dunia yang imersif dan interaktif di jantung pariwisata Indonesia, Labuan Bajo.</p>
+                     <p class="text-sm md:text-base max-w-3xl mx-auto italic opacity-80">Proposal Ini Terbatas Pada Ide dari Ondi Ch Siagian dan R. Agung Eko Pitono</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vision Section -->
+        <section id="vision" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12 section-title">Visi & Misi</h2>
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="text-center md:text-left">
+                        <h3 class="text-2xl font-semibold mb-4 text-[#D4A373]">Visi Kami</h3>
+                        <p class="mb-6">Menjadi destinasi edutainment terdepan di Asia Tenggara yang menginspirasi konservasi satwa liar global melalui kisah naga terakhir di dunia, komodo.</p>
+                        <h3 class="text-2xl font-semibold mb-4 text-[#D4A373]">Misi Kami</h3>
+                        <ul class="list-none space-y-2 text-left">
+                            <li class="flex items-start"><span class="text-[#D4A373] mr-2">✔</span> Memberikan pengalaman imersif tentang kehidupan komodo.</li>
+                            <li class="flex items-start"><span class="text-[#D4A373] mr-2">✔</span> Mendukung penelitian dan upaya konservasi komodo secara aktif.</li>
+                            <li class="flex items-start"><span class="text-[#D4A373] mr-2">✔</span> Memberdayakan komunitas lokal melalui pariwisata berkelanjutan.</li>
+                        </ul>
+                    </div>
+                    <div class="card p-8">
+                        <h4 class="font-bold text-lg mb-4 text-center">Nilai Inti</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <h5 class="font-semibold">Edukasi</h5>
+                                <p class="text-sm">Menyajikan informasi ilmiah secara menarik dan mudah dipahami.</p>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold">Konservasi</h5>
+                                <p class="text-sm">Berkontribusi nyata pada kelestarian komodo dan habitatnya.</p>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold">Inovasi</h5>
+                                <p class="text-sm">Menggunakan teknologi terkini untuk pengalaman tak terlupakan.</p>
+                            </div>
+                             <div>
+                                <h5 class="font-semibold">Kolaborasi</h5>
+                                <p class="text-sm">Bekerja sama dengan komunitas, pemerintah, dan peneliti.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Opportunity Section -->
+        <section id="market" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12 section-title">Peluang Pasar</h2>
+                <p class="max-w-3xl mx-auto text-center mb-12">Labuan Bajo adalah destinasi super prioritas dengan pertumbuhan pariwisata yang pesat. Museum Komodo akan mengisi kekosongan atraksi edukasi berkualitas tinggi yang dapat dinikmati oleh semua segmen wisatawan, terutama saat cuaca tidak mendukung untuk aktivitas laut.</p>
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold text-center mb-4">Pertumbuhan Wisatawan Labuan Bajo</h3>
+                        <div class="chart-container">
+                            <canvas id="touristGrowthChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold text-center mb-4">Target Segmentasi Pengunjung</h3>
+                         <div class="chart-container">
+                            <canvas id="visitorSegmentationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Concept Section -->
+        <section id="concept" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12 section-title">Konsep Museum</h2>
+                <p class="max-w-3xl mx-auto text-center mb-12">Kami mengusung konsep "Immersive Edutainment". Pengunjung tidak hanya melihat, tetapi juga merasakan dan berinteraksi. Museum akan dibagi menjadi beberapa zona pameran utama.</p>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="card p-6">
+                        <div class="text-4xl mb-4">🌏</div>
+                        <h3 class="text-xl font-semibold mb-2">Zona Evolusi & Habitat</h3>
+                        <p>Diorama interaktif, pemetaan video, dan replika fosil yang menceritakan jutaan tahun evolusi komodo dan keunikan habitatnya.</p>
+                    </div>
+                    <div class="card p-6">
+                        <div class="text-4xl mb-4">🔬</div>
+                        <h3 class="text-xl font-semibold mb-2">Zona Biologi & Perilaku</h3>
+                        <p>Pameran holografik dan layar sentuh yang menjelaskan anatomi, siklus hidup, dan perilaku berburu komodo yang menakjubkan.</p>
+                    </div>
+                    <div class="card p-6">
+                        <div class="text-4xl mb-4">❤️</div>
+                        <h3 class="text-xl font-semibold mb-2">Zona Konservasi</h3>
+                        <p>Area yang didedikasikan untuk upaya pelestarian, menampilkan kisah sukses, tantangan, dan bagaimana pengunjung dapat berpartisipasi.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Financial Section -->
+        <section id="financial" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12 section-title">Proyeksi Finansial</h2>
+                 <p class="max-w-3xl mx-auto text-center mb-12">Model bisnis kami didasarkan pada diversifikasi pendapatan dari tiket masuk, penjualan merchandise, F&B, dan kemitraan korporat untuk memastikan keberlanjutan finansial.</p>
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold text-center mb-4">Proyeksi Pendapatan (5 Tahun Pertama)</h3>
+                        <div class="chart-container">
+                            <canvas id="revenueProjectionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold text-center mb-4">Alokasi Kebutuhan Dana Awal</h3>
+                        <div class="chart-container">
+                            <canvas id="fundingAllocationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roadmap Section -->
+        <section id="roadmap" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12 section-title">Peta Jalan</h2>
+                <div class="relative">
+                    <!-- Garis Timeline -->
+                    <div class="absolute left-1/2 h-full w-0.5 bg-[#D4A373]/50 hidden md:block"></div>
+                    
+                    <div class="space-y-12">
+                        <!-- Fase 1 -->
+                        <div class="md:flex md:justify-between md:items-center w-full">
+                            <div class="md:w-5/12">
+                                <div class="card p-6 md:ml-auto">
+                                    <p class="text-[#D4A373] font-semibold">Q1 - Q2 2026</p>
+                                    <h4 class="font-bold text-lg">Fase 1: Perencanaan & Pendanaan</h4>
+                                    <p class="text-sm mt-2">Studi kelayakan akhir, perizinan, finalisasi desain arsitektur, dan penggalangan dana tahap awal (seed funding).</p>
+                                </div>
+                            </div>
+                            <div class="hidden md:block w-10 h-10 bg-[#D4A373] rounded-full z-10 flex items-center justify-center text-white font-bold">1</div>
+                            <div class="md:w-5/12"></div>
+                        </div>
+
+                        <!-- Fase 2 -->
+                        <div class="md:flex md:flex-row-reverse md:justify-between md:items-center w-full">
+                            <div class="md:w-5/12">
+                                <div class="card p-6 md:mr-auto">
+                                     <p class="text-[#D4A373] font-semibold">Q3 2026 - Q4 2027</p>
+                                    <h4 class="font-bold text-lg">Fase 2: Pembangunan & Pengembangan</h4>
+                                    <p class="text-sm mt-2">Konstruksi fisik bangunan museum dan pengembangan konten pameran interaktif bekerja sama dengan ahli teknologi dan biologi.</p>
+                                </div>
+                            </div>
+                            <div class="hidden md:block w-10 h-10 bg-[#D4A373] rounded-full z-10 flex items-center justify-center text-white font-bold">2</div>
+                            <div class="md:w-5/12"></div>
+                        </div>
+
+                        <!-- Fase 3 -->
+                        <div class="md:flex md:justify-between md:items-center w-full">
+                           <div class="md:w-5/12">
+                                <div class="card p-6 md:ml-auto">
+                                    <p class="text-[#D4A373] font-semibold">Q1 2028</p>
+                                    <h4 class="font-bold text-lg">Fase 3: Peluncuran Awal (Soft Launching)</h4>
+                                    <p class="text-sm mt-2">Uji coba operasional, pelatihan staf, dan pembukaan terbatas untuk mendapatkan umpan balik dari komunitas dan mitra.</p>
+                                </div>
+                            </div>
+                           <div class="hidden md:block w-10 h-10 bg-[#D4A373] rounded-full z-10 flex items-center justify-center text-white font-bold">3</div>
+                           <div class="md:w-5/12"></div>
+                        </div>
+                        
+                         <!-- Fase 4 -->
+                        <div class="md:flex md:flex-row-reverse md:justify-between md:items-center w-full">
+                            <div class="md:w-5/12">
+                                <div class="card p-6 md:mr-auto">
+                                     <p class="text-[#D4A373] font-semibold">Q2 2028</p>
+                                    <h4 class="font-bold text-lg">Fase 4: Pembukaan Resmi (Grand Opening)</h4>
+                                    <p class="text-sm mt-2">Peluncuran resmi untuk publik dengan kampanye pemasaran terintegrasi untuk menarik wisatawan domestik dan internasional.</p>
+                                </div>
+                            </div>
+                            <div class="hidden md:block w-10 h-10 bg-[#D4A373] rounded-full z-10 flex items-center justify-center text-white font-bold">4</div>
+                            <div class="md:w-5/12"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Audio Summary Section -->
+        <section id="audio" class="py-20 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold mb-4 section-title">Ringkasan Audio</h2>
+                <p class="mb-6 max-w-2xl mx-auto">Dengarkan ringkasan proposal dalam format audio. Cukup tekan tombol putar di bawah ini.</p>
+                <div class="mt-8">
+                    <audio controls class="w-full max-w-md mx-auto rounded-lg shadow-lg">
+                        <source src="Bedah_Tuntas_Studi_Kelayakan_Museum_Naga_Komodo_Labuan_Bajo__St.mp3" type="audio/mpeg">
+                        Browser Anda tidak mendukung elemen audio.
+                    </audio>
+                </div>
+            </div>
+        </section>
+
+        <!-- Video Explanation Section -->
+        <section id="video-explanation" class="py-20">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold mb-4 section-title">Video Penjelasan</h2>
+                <p class="mb-6 max-w-2xl mx-auto">Tonton video penjelasan singkat mengenai konsep dan visi di balik proposal Museum Komodo.</p>
+                <div class="mt-8">
+                    <video controls class="w-full max-w-2xl mx-auto rounded-lg shadow-lg bg-black">
+                        <source src="Museum_Komodo__Sebuah_Legenda.mp4" type="video/mp4">
+                        Browser Anda tidak mendukung elemen video.
+                    </video>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Mind Map Section -->
+        <section id="peta-pikiran" class="py-20 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold mb-4 section-title">Peta Pikiran</h2>
+                <p class="mb-6 max-w-2xl mx-auto">Visualisasikan keseluruhan konsep proposal dalam format peta pikiran untuk pemahaman yang komprehensif.</p>
+                <div class="mt-8">
+                    <video controls class="w-full max-w-2xl mx-auto rounded-lg shadow-lg bg-black">
+                        <source src="mind map Museum Komodo.mp4" type="video/mp4">
+                        Browser Anda tidak mendukung elemen video.
+                    </video>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+
+    <footer class="bg-[#3D352E] text-white mt-20">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>&copy; 2025 Proyek Startup Museum Komodo. Semua Hak Cipta Dilindungi.</p>
+            <p class="text-sm opacity-70 mt-2">Sebuah Inisiatif untuk Edukasi dan Konservasi</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Navigation Link Active State on Scroll
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        const closeMobileMenu = () => {
+            if(!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        };
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 70) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                const href = link.getAttribute('href');
+                if (href && href.includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // Chart.js Configurations
+        Chart.defaults.font.family = 'Inter';
+        Chart.defaults.color = '#4A4A4A';
+        
+        const chartOptions = {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+                tooltip: {
+                    backgroundColor: '#3D352E',
+                    titleColor: '#FFFFFF',
+                    bodyColor: '#FFFFFF',
+                    padding: 10,
+                    cornerRadius: 6,
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#F0EAE3'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        };
+
+        // Tourist Growth Chart
+        const touristGrowthCtx = document.getElementById('touristGrowthChart').getContext('2d');
+        new Chart(touristGrowthCtx, {
+            type: 'line',
+            data: {
+                labels: ['2020', '2021', '2022', '2023', '2024 (Est.)'],
+                datasets: [{
+                    label: 'Jumlah Wisatawan (ribu)',
+                    data: [60, 95, 170, 250, 320],
+                    borderColor: '#D4A373',
+                    backgroundColor: '#D4A373_33',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Visitor Segmentation Chart
+        const visitorSegmentationCtx = document.getElementById('visitorSegmentationChart').getContext('2d');
+        new Chart(visitorSegmentationCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Keluarga', 'Wisatawan Asing', 'Pelajar & Grup', 'Lainnya'],
+                datasets: [{
+                    label: 'Segmentasi Pengunjung',
+                    data: [40, 35, 15, 10],
+                    backgroundColor: ['#D4A373', '#E9C46A', '#F4A261', '#E76F51'],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2,
+                }]
+            },
+             options: { ...chartOptions, scales: { y: { display: false }, x: { display: false } } }
+        });
+        
+        // Revenue Projection Chart
+        const revenueProjectionCtx = document.getElementById('revenueProjectionChart').getContext('2d');
+        new Chart(revenueProjectionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Tahun 1', 'Tahun 2', 'Tahun 3', 'Tahun 4', 'Tahun 5'],
+                datasets: [{
+                    label: 'Pendapatan (Miliar IDR)',
+                    data: [5, 8.5, 12, 15.5, 20],
+                    backgroundColor: '#D4A373',
+                    borderRadius: 4
+                }]
+            },
+            options: chartOptions
+        });
+        
+        // Funding Allocation Chart
+        const fundingAllocationCtx = document.getElementById('fundingAllocationChart').getContext('2d');
+        new Chart(fundingAllocationCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Pembangunan', 'Teknologi & Konten', 'Operasional Awal', 'Pemasaran'],
+                datasets: [{
+                    label: 'Alokasi Dana (%)',
+                    data: [50, 25, 15, 10],
+                    backgroundColor: ['#D4A373', '#E9C46A', '#F4A261', '#E76F51'],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2,
+                }]
+            },
+            options: { ...chartOptions, scales: { y: { display: false }, x: { display: false } } }
+        });
+
+    </script>
+</body>
+</html>
+
+
